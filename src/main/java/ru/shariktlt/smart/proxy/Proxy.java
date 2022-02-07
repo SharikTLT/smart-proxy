@@ -1,4 +1,4 @@
-package ru.shariktlt.proxy;
+package ru.shariktlt.smart.proxy;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
@@ -13,14 +13,15 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 public class Proxy {
-    private final static Logger LOGGER = LoggerFactory.getLogger(ru.shariktlt.example.Proxy.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(Proxy.class);
 
     private final int serverPort;
 
-    private ServersRegistry registry = new ServersRegistry();
+    private ServersRegistry registry;
 
-    public Proxy(int serverPort) {
-        this.serverPort = serverPort;
+    public Proxy(int port, ServersRegistry serversRegistry) {
+        serverPort = port;
+        registry = serversRegistry;
     }
 
     public void register(String... urls){
@@ -33,10 +34,11 @@ public class Proxy {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
+            LOGGER.info("Start SmartProxy at port: {}", serverPort);
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
+                    .handler(new LoggingHandler(LogLevel.DEBUG))
                     .childHandler(new HTTPProxyInitializer(registry))
                     .childOption(ChannelOption.AUTO_READ, false)
                     .bind(serverPort).sync().channel().closeFuture().sync();

@@ -1,4 +1,4 @@
-package ru.shariktlt.proxy;
+package ru.shariktlt.smart.proxy;
 
 import org.junit.jupiter.api.Test;
 

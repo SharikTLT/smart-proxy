@@ -1,4 +1,4 @@
-package ru.shariktlt.proxy;
+package ru.shariktlt.smart.proxy;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 @Getter
-@ToString
 @EqualsAndHashCode
 public class ServerRecord {
 
@@ -29,5 +28,19 @@ public class ServerRecord {
         port = uri.getPort() > 0 ? uri.getPort() : isHttps ? 443 : 80;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s://%s%s", getProtocolString(), host, getPortString());
+    }
 
+    private String getProtocolString() {
+        return isHttps ? "https" : "http";
+    }
+
+    private String getPortString(){
+        if(port == 80 || port == 443){
+            return "";
+        }
+        return String.format(":%d", port);
+    }
 }

@@ -1,0 +1,4 @@
+smartProxy:
+  port: 7777
+server:
+  port: 8080

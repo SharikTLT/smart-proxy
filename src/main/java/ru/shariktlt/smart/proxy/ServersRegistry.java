@@ -1,14 +1,15 @@
-package ru.shariktlt.proxy;
+package ru.shariktlt.smart.proxy;
 
-import ru.shariktlt.proxy.iterators.ListProxyIterator;
-import ru.shariktlt.proxy.iterators.ProxyIterator;
-import ru.shariktlt.proxy.iterators.SingleProxyIterator;
+import ru.shariktlt.smart.proxy.iterators.ListProxyIterator;
+import ru.shariktlt.smart.proxy.iterators.ProxyIterator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
 
 public class ServersRegistry {
 
@@ -54,8 +55,8 @@ public class ServersRegistry {
                 .filter(e -> e.getValue().containsKey(url))
                 .findFirst();
         if(exact.isPresent()){
-            return new SingleProxyIterator(this, exact.get().getKey());
+            return new ListProxyIterator(this, asList(exact.get().getKey()));
         }
-        return new ListProxyIterator(this, registry.keySet().stream().collect(Collectors.toList()));
+        return new ListProxyIterator(this, new ArrayList<>(registry.keySet()));
     }
 }

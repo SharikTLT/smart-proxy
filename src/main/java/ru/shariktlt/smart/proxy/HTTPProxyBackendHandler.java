@@ -1,21 +1,21 @@
-package ru.shariktlt.proxy;
+package ru.shariktlt.smart.proxy;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
-public class HTTPProxyBackendHandler extends SimpleChannelInboundHandler<HttpResponse> {
+public class HTTPProxyBackendHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
     private static final Logger LOGGER = LoggerFactory.getLogger(HTTPProxyBackendHandler.class);
 
-    private Consumer<HttpResponse> consumer;
+    private Consumer<FullHttpResponse> consumer;
 
-    public HTTPProxyBackendHandler(Consumer<HttpResponse> consumer) {
+    public HTTPProxyBackendHandler(Consumer<FullHttpResponse> consumer) {
         this.consumer = consumer;
     }
 
@@ -26,14 +26,14 @@ public class HTTPProxyBackendHandler extends SimpleChannelInboundHandler<HttpRes
     }
 
     @Override
-    public void channelRead0(final ChannelHandlerContext ctx, HttpResponse msg) {
+    public void channelRead0(final ChannelHandlerContext ctx, FullHttpResponse msg) {
         consumer.accept(msg);
         ctx.channel().close();
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        consumer.accept(null);
+        //consumer.accept(null);
         ctx.close();
     }
 
