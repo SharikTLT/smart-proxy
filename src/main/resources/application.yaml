@@ -1,4 +1,18 @@
 smartProxy:
   port: 7777
+  predefinedProviders: https://yandex.ru, https://www.google.com
 server:
   port: 8080
+
+spring:
+  thymeleaf:
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    content-type: text/html # ;charset=<encoding> is added
+    cache: true
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.thymeleaf: DEBUG

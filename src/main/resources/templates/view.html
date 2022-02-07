@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Smart Proxy - view urls</title>
+</head>
+<body>
+<h1>Smart Proxy</h1>
+<div>
+    <div>
+        <h2 th:text="${provider}"></h2>
+        <a href="/">Back to dashboard</a>
+    </div>
+    <div class="emptyProviders" th:if="${serverUrls.isEmpty()}">
+        <h2>No providers registered</h2>
+    </div>
+    <table class="providersTable" th:unless="${serverUrls.isEmpty()}">
+        <tr>
+            <th>URL registered</th>
+        </tr>
+        <tr th:each="url: ${serverUrls}">
+            <td th:text="${url}"></td>
+        </tr>
+    </table>
+
+</div>
+<style>
+.proxyPort {
+  margin: 2em;
+}
+body {
+  text-align: center;
+}
+.proxyPort span {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.providersTable {
+  margin: 1em auto;
+  text-align: left;
+}
+.providersTable td {
+  min-width: 200px;
+}
+</style>
+</body>
+</html>

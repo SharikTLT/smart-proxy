@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Smart Proxy - dashboard</title>
+</head>
+<body>
+<h1>Smart Proxy</h1>
+<div>
+    <div class="proxyPort">
+        Listen on <span th:text="${proxyPort}"></span>
+    </div>
+    <form class="registerForm" method="post">
+        <input name="provider" placeholder="URL of provider"/>
+        <button>Register</button>
+    </form>
+    <div class="emptyProviders" th:if="${servers.isEmpty()}">
+        <h2>No providers registered</h2>
+    </div>
+    <table class="providersTable" th:unless="${servers.isEmpty()}">
+        <tr>
+            <th>Provider</th>
+            <th>URL registered</th>
+            <th>Actions</th>
+        </tr>
+        <tr th:each="server: ${servers}">
+            <td th:text="${server.getKey()}"></td>
+            <td th:text="${server.getValue().size()}"></td>
+            <td>
+                <a th:href="@{/remove?provider={provider}(provider=${server.getKey()})}">Remove</a>
+                |<a th:href="@{/view?provider={provider}(provider=${server.getKey()})}">View URLs</a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<style>
+.proxyPort {
+  margin: 2em;
+}
+body {
+  text-align: center;
+}
+.proxyPort span {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.providersTable {
+  margin: 1em auto;
+  text-align: left;
+}
+.providersTable td {
+  min-width: 200px;
+}
+</style>
+</body>
+</html>

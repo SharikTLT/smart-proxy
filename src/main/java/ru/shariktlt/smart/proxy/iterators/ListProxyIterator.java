@@ -25,6 +25,7 @@ public class ListProxyIterator implements ProxyIterator {
     public static final String HEADER_ERROR_CODE = HEADER_PREFIX + "ErrorCode";
     public static final String HEADER_PROVIDER = HEADER_PREFIX + "Provider";
     public static final String HEADER_CONSUME_302 = HEADER_PREFIX + "Consume-302";
+    public static final String HEADER_CONSUME_301 = HEADER_PREFIX + "Consume-301";
     public static final String HEADER_CONTENT_LENGTH = "Content-Length";
     public static final int MAX_CONTENT_LENGTH = 1024 * 1024;
 
@@ -140,6 +141,7 @@ public class ListProxyIterator implements ProxyIterator {
         if (response == null
                 || response.status().code() == 404
                 || (!originalRequest.headers().contains(HEADER_CONSUME_302) && response.status().code() == 302)
+                || (!originalRequest.headers().contains(HEADER_CONSUME_301) && response.status().code() == 301)
         ) {
             iterate();
             return;

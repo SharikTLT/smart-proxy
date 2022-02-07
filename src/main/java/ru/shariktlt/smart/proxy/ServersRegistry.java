@@ -3,10 +3,7 @@ package ru.shariktlt.smart.proxy;
 import ru.shariktlt.smart.proxy.iterators.ListProxyIterator;
 import ru.shariktlt.smart.proxy.iterators.ProxyIterator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Arrays.asList;
@@ -17,10 +14,10 @@ public class ServersRegistry {
 
     public void register(ServerRecord record, String url) {
         register(record);
-        registry.get(record).put(url, true);
+        registry.get(record).put(cleanupUrl(url), true);
     }
 
-    public void register(ServerRecord record){
+    public void register(ServerRecord record) {
         if (!registry.containsKey(record)) {
             synchronized (this) {
                 registry.putIfAbsent(record, new ConcurrentHashMap<>());
@@ -28,7 +25,8 @@ public class ServersRegistry {
         }
     }
 
-    public boolean check(ServerRecord record, String url) {
+    public boolean check(ServerRecord record, String rawUrl) {
+        String url = cleanupUrl(rawUrl);
         return registry.containsKey(record) && registry.get(record).containsKey(url);
     }
 
@@ -50,13 +48,35 @@ public class ServersRegistry {
         }
     }
 
-    public ProxyIterator getIteratorFor(String url){
+    public ProxyIterator getIteratorFor(String rawUrl) {
+        String url = cleanupUrl(rawUrl);
         Optional<Map.Entry<ServerRecord, Map<String, Boolean>>> exact = this.registry.entrySet().stream()
                 .filter(e -> e.getValue().containsKey(url))
                 .findFirst();
-        if(exact.isPresent()){
+        if (exact.isPresent()) {
             return new ListProxyIterator(this, asList(exact.get().getKey()));
         }
         return new ListProxyIterator(this, new ArrayList<>(registry.keySet()));
+    }
+
+    public List<Map.Entry<ServerRecord, Map<String, Boolean>>> getServers() {
+        return new ArrayList<>(registry.entrySet());
+    }
+
+    public List<String> getServerUrls(ServerRecord record) {
+        if(!registry.containsKey(record)){
+            return Collections.emptyList();
+        }
+        List<String> urls = new ArrayList<>(registry.get(record).keySet());
+        urls.sort(String::compareTo);
+        return urls;
+    }
+
+    private String cleanupUrl(String rawUrl) {
+        int pos = rawUrl.indexOf('?');
+        if (pos > -1) {
+            return rawUrl.substring(0, pos);
+        }
+        return rawUrl;
     }
 }

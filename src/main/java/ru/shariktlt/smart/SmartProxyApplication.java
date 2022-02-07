@@ -6,9 +6,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import ru.shariktlt.smart.proxy.Proxy;
+import ru.shariktlt.smart.proxy.ServerRecord;
 import ru.shariktlt.smart.proxy.ServersRegistry;
 
 import javax.imageio.spi.ServiceRegistry;
+
+import java.util.List;
 
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
@@ -17,6 +20,9 @@ public class SmartProxyApplication {
 
     @Value("${smartProxy.port:-1}")
     private int proxyPort;
+
+    @Value("${smartProxy.predefinedProviders}")
+    private String[] predefinedProviders;
 
     public static void main(String[] args) {
         SpringApplication.run(SmartProxyApplication.class, args);
@@ -33,7 +39,13 @@ public class SmartProxyApplication {
 
     @Bean
     public ServersRegistry serversRegistryBean(){
-        return new ServersRegistry();
+        ServersRegistry serversRegistry = new ServersRegistry();
+        if(predefinedProviders != null && predefinedProviders.length > 0){
+            for (String provider : predefinedProviders) {
+                serversRegistry.register(new ServerRecord(provider));
+            }
+        }
+        return serversRegistry;
     }
 
     @Bean
